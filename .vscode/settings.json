@@ -1,0 +1,6 @@
+{
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 100,
+    "browser-preview.startUrl": "http://127.0.0.1:5500/",
+    "editor.fontFamily": "'Cascadia Code'"
+}
