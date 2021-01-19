@@ -18,22 +18,83 @@ function Shape(x,y,velX,velY,exists){
   this.velY = velY;
   this.exists = exists;
 }
-function Ball(x, y, velX, velY, color, size,exists) {
+function Ball(x, y, velX, velY,exists, color, size) {
  Shape.call(this,x,y,velX,velY,exists);
  this.color = color;
   this.size = size;
 }
 
-
+// todo created the ball constructor's prototype 
 Ball.prototype = Shape.prototype;
-Ball.prototype.constructor.name =  Ball;
-Object.defineProperty(Ball.prototype,'constructor',{
-  value : Ball
-})
+Ball.prototype.constructor =  Ball;
 
+//  evil circle is created 
+function EvilCircle(x,y,velX,velY,exists){
+    Shape.call(this,x,y,velX,velY,exists);
+    this.velX = 20;
+    this.velY = 20;
+    this.color = 'white';
+    this.size = 10
+}
 
+EvilCircle.prototype.constructor =EvilCircle;
+console.log(EvilCircle.prototype) 
 
+EvilCircle.prototype.draw = function(){
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = this.color;
+    ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+    ctx.stroke();
+}
+EvilCircle.prototype.checkBounds = function(){
+    if ((this.x + this.size) >= width) {
+        this.velX = -(this.size);
+      }
+    
+      if ((this.x - this.size) <= 0) {
+        this.velX = -(this.size);
+      }
+    
+      if ((this.y + this.size) >= height) {
+        this.velY = -(this.size);
+      }
+    
+      if ((this.y - this.size) <= 0) {
+        this.velY = -(this.size);
+      }
 
+}
+EvilCircle.prototype.setControls = function(){
+    let _this = this;
+    window.onkeydown  = function(e) {
+    if (e.key == 'a') {
+      _this.x -= _this.velX;
+    } else if (e.key == 'd') {
+      _this.x += _this.velX;
+    } else if (e.key == 'w') {
+      _this.y -= _this.velY;
+    } else if (e.key == 's') {
+      _this.y += _this.velY;
+    }
+  }
+}
+
+EvilCircle.prototype.collisionDetect =  function(){
+    
+    for (let j = 0; j < balls.length; j++) {
+        if ( balls[j].exists) {
+          const dx = this.x - balls[j].x;
+          const dy = this.y - balls[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+    
+          if (distance <= this.size + balls[j].size) {
+            balls[j].size = 0;
+          }
+        }
+      }
+    
+}
 
 
 Shape.prototype.draw = function() {
@@ -63,24 +124,22 @@ Ball.prototype.update = function() {
   this.y += this.velY;
 }
 Ball.prototype.collisionDetect = function() {
-  for (let j = 0; j < balls.length; j++) {
-    if (!(this === balls[j])) {
-      const dx = this.x - balls[j].x;
-      const dy = this.y - balls[j].y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < this.size + balls[j].size) {
-        balls[j].color = this.color = 'rgb(' + random(0, 255) + ',' + random(0, 255) + ',' + random(0, 255) +')';
-        // this.velX = -(this.velX);
-        // this.velY = -(this.velY);
+    for (let j = 0; j < balls.length; j++) {
+      if (!(this === balls[j]) && balls[j].exists) {
+        const dx = this.x - balls[j].x;
+        const dy = this.y - balls[j].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+  
+        if (distance < this.size + balls[j].size) {
+          balls[j].color = this.color = 'rgb(' + random(0, 255) + ',' + random(0, 255) + ',' + random(0, 255) +')';
+        }
       }
     }
   }
-}
 
 let balls = [];
 
-while (balls.length < 10) {
+while (balls.length < 25) {
   let size = random(10,20);
   let ball = new Ball(
     // ball position always drawn at least one ball width
@@ -89,22 +148,36 @@ while (balls.length < 10) {
     random(0 + size,height - size),
     random(-4,2),
     random(-4,2),
+    true,
     'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
     size
   );
 
   balls.push(ball);
 }
+
 function loop() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
   ctx.fillRect(0, 0, width, height);
+  
+  let evilCircle = new EvilCircle(50,50,20,20,true);
+  evilCircle.draw();
+  evilCircle.setControls();
 
-  for (let i = 0; i < balls.length; i++) {
-    balls[i].draw();
-    balls[i].update();
-    balls[i].collisionDetect(); 
-  }
 
-  requestAnimationFrame(loop);
+//   for (let i = 0; i < balls.length; i++) {
+//       if (balls[i].exists){
+//     balls[i].draw();
+//     balls[i].update();
+//     balls[i].collisionDetect(); 
+
+//     evilCircle.draw();
+//     evilCircle.checkBounds();
+  
+//     evilCircle.collisionDetect();
+//   }
+//   }
+
+//   requestAnimationFrame(loop);
 }
 loop();
