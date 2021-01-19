@@ -11,17 +11,17 @@ function random(min, max) {
   const num = Math.floor(Math.random() * (max - min + 1)) + min;
   return num;
 }
-function Shape(x,y,color,size,exists){
+function Shape(x,y,velX,velY,exists){
   this.x = x;
   this.y = y;
-  this.color = color;
-  this.size = size;
-  this.exists = true;
+  this.velX = velX;
+  this.velY = velY;
+  this.exists = exists;
 }
 function Ball(x, y, velX, velY, color, size,exists) {
- Shape.call(this,x,y,color,size,exists);
- this.velX = velX;
-  this.velY = velY;
+ Shape.call(this,x,y,velX,velY,exists);
+ this.color = color;
+  this.size = size;
 }
 
 
