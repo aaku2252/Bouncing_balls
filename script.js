@@ -24,7 +24,7 @@ function Ball(x, y, velX, velY,exists, color, size) {
   this.size = size;
 }
 
-// todo created the ball constructor's prototype 
+//  created the ball constructor's prototype 
 Ball.prototype = Shape.prototype;
 Ball.prototype.constructor =  Ball;
 
@@ -66,15 +66,15 @@ EvilCircle.prototype.checkBounds = function(){
 
 }
 EvilCircle.prototype.setControls = function(){
-    let _this = this;
-    window.onkeydown  = function(e) {
-    if (e.key == 'a') {
+  let _this = this;
+    window.onkeydown  = function(e) {  
+    if (e.key === 'a' ) {
       _this.x -= _this.velX;
-    } else if (e.key == 'd') {
+    } else if (e.key === 'd') {
       _this.x += _this.velX;
-    } else if (e.key == 'w') {
+    } else if (e.key === 'w') {
       _this.y -= _this.velY;
-    } else if (e.key == 's') {
+    } else if (e.key === 's') {
       _this.y += _this.velY;
     }
   }
@@ -155,29 +155,25 @@ while (balls.length < 25) {
 
   balls.push(ball);
 }
+let evilCircle = new EvilCircle(50,50,20,20,true);
+
 
 function loop() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
   ctx.fillRect(0, 0, width, height);
   
-  let evilCircle = new EvilCircle(50,50,20,20,true);
   evilCircle.draw();
+  evilCircle.collisionDetect();
+  evilCircle.checkBounds();
   evilCircle.setControls();
 
-
-//   for (let i = 0; i < balls.length; i++) {
-//       if (balls[i].exists){
-//     balls[i].draw();
-//     balls[i].update();
-//     balls[i].collisionDetect(); 
-
-//     evilCircle.draw();
-//     evilCircle.checkBounds();
-  
-//     evilCircle.collisionDetect();
-//   }
-//   }
-
-//   requestAnimationFrame(loop);
+  for (let i = 0; i < balls.length; i++) {
+      if (balls[i].exists){
+    balls[i].draw();
+    balls[i].update();
+    balls[i].collisionDetect(); 
+  }
+  }
+  requestAnimationFrame(loop);
 }
 loop();
